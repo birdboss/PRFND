@@ -98,7 +98,7 @@ namespace ConsoleApp3
                     if (studentData[i,2] == userInput)
                     {
                         found = true;
-                        Console.WriteLine("Student name: " + studentData[i, 0] + studentData[i, 1]);
+                        Console.WriteLine("Student name: " + studentData[i, 0] + " " + studentData[i, 1]);
                         Console.WriteLine("Student number: " + studentData[i, 2]);
                         Console.ReadLine();
 
