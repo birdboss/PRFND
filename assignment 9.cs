@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,7 +70,7 @@ namespace assignment_9
 
             void inputGrade()
             {
-                //THIS PART DOESN'T SEEM TO WORK
+                
                 Console.Write("Please enter a grade amount between 0 and 100: ");
                 int num = Convert.ToInt32(Console.ReadLine());
                 grade = getGrade(num);                
@@ -96,9 +96,7 @@ namespace assignment_9
             string getGrade(int num)
             {
 
-                gradeCheck(num);
-
-                //NUM DOES NOT GET ACKNOWLEDGED IN HERE AND ALWAYS RESULTS IN A FAIL GRADE.
+                gradeCheck(num);                
 
                 if (num == 100 && num > 90)
                 {
