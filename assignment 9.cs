@@ -20,35 +20,61 @@ namespace assignment_9
         {
             int counter = 0;
             string grade;
+            int selection = 0;
 
             List<Student> listStudents = new List<Student>();
 
-            Console.WriteLine("Now entering new student:");
-            Console.ReadLine();
-            addStudent();
+            
 
 
 
 
 
 
-
-
+            void displayMenu()
+            {
+                while selection = 0
+                {
+                    Console.WriteLine("Please select one of the following options by entering its corresponding number. \n 1 - Add a new student \n 2 - Display a student \n 3 - Modify a student \n 4 - Display all students \n 5 - Quit");
+                    selection = convert.ToInt32(Console.ReadLine());
+                    
+                }
+                //changing to switch cases
+                if (selection == 1)
+                {
+                    addStudent();
+                    selection = 0
+                }
+                if (selection == 2)
+                {
+                    displayInfo();
+                    selection = 0
+                }
+                
+            }
+            
             void addStudent()
             {
+                
+                displayMenu();
+                
+                
                 listStudents.Add(new Student());
                 inputName();
                 inputId();
                 inputGrade();
+                
+                displayInfo();
 
-                //THE PROGRAM ENDS BEFORE IT CAN GO ANY FARTHER.
-
+                counter++;
+                
+            }
+            void displayInfo()
+            {
                 Console.WriteLine("The student's information is as follows...");
                 Console.WriteLine("Name: " + listStudents[counter].FirstName + " " + listStudents[counter].LastName);
                 Console.WriteLine("ID: " + listStudents[counter].Id);
                 Console.WriteLine("Grade: " + listStudents[counter].Grade);
-
-                counter++;
             }
 
             void inputId()
