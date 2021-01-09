@@ -50,7 +50,7 @@ namespace assignment_9_2
         internal static bool modStudent(List<Student> studentList)
         {
             bool mod = true;
-            //searchStudent(studentList, mod);
+           
             inputStudent(studentList, mod);
             //    while (mod == true)
             //    { 
@@ -200,7 +200,8 @@ namespace assignment_9_2
                 int num = Convert.ToInt32(Console.ReadLine());
                 Console.ReadLine();
                 grade = getGrade(num, aMod, studentList);
-
+                
+                //NOTE: THERE IS A PROBLEM HERE BECAUSE I'M STRUGGLING TO FIGURE OUT HOW TO BRING OVER THE INDEX NUMBER
                 studentList[i].FirstName = fname;
                 studentList[i].LastName = lname;
                 studentList[i].ID = id;
