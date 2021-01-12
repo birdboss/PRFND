@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -58,14 +58,15 @@ namespace ConsoleApp4
         //NOTE : NOT SURE HOW TO MAKE SURE THE STRING IS ABLE TO CONTAIN BOTH DECIMAL AND NUMERIC VALUES. TRIED "CONTAINS" AND "ALL" BUT NOT SURE HOW TO MAKE THEM WORK WITH THIS.
         private static string validateTotal(List<Client> clientList, string total)
         {
-            while (total.(char.IsLetter))
+            while (total.All(char.IsNumber))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Error invalid ID: Please ensure the client's unique, three digit ID number and re-enter the data as prompted.");
+                Console.WriteLine("Error: Please make sure the total is a numeric value with a decimal. Please re-enter the amount...");
                 Console.ForegroundColor = ConsoleColor.White;
-                total = Console.ReadLine();
-                addClient(clientList);
+                Console.Write("Total: $");
+                total = Console.ReadLine();                
             }
+            Console.WriteLine("Total saved.");
 
             return total;
         }
