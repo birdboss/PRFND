@@ -24,13 +24,10 @@ namespace ConsoleApp1
             Console.WriteLine("The largest number was:\n");
             
             Array.Sort(userNumbers);
+            Console.WriteLine(userNumbers[9]);
                      
             
-            Console.WriteLine("The numbers you chose are:\n ");
-            for (int i = 0; i < userNumbers.Length; i++)
-            {
-                Console.WriteLine(userNumbers[i]);
-            }
+           
             Console.ReadLine();
         }
     }
