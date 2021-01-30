@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -24,15 +24,21 @@ namespace WindowsFormsApp3
             InitializeComponent();           
         }
 
-        public static string PIN;
+        
         string CS = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\source\repos\project2\WindowsFormsApp3\Clients.mdf;Integrated Security=True";
         string actionChoice;
         string accountType = "C";        
         LogIn login = new LogIn();
         string amount;
+        public static string pin = LogIn.pin;
+        decimal balance;
+        decimal Amount;
+        decimal newBalance;
+        string _balance;
+        string _accountType;
 
-        
-        
+
+
 
 
         private void Input_Load(object sender, EventArgs e)
@@ -80,6 +86,13 @@ namespace WindowsFormsApp3
             {
                 txtInst.Text = "Please enter an amount that is multiple of 10\nThe maximum amount is 1000";
                 actionChoice = "with";
+                decimal checkAmount = Convert.ToDecimal(txtAmount.Text);
+                if (checkAmount > 1000)
+                {
+                    btnSubmit.Enabled = false;
+                }
+                else
+                { btnSubmit.Enabled = true; }
             }
 
         }
@@ -89,6 +102,7 @@ namespace WindowsFormsApp3
             {
                 txtInst.Text = "Please enter the amount you'd like to deposit";
                 actionChoice = "dep";
+                btnSubmit.Enabled = true;
             }
             
         }
@@ -97,7 +111,19 @@ namespace WindowsFormsApp3
             if (rbtnTran.Checked == true)
             {
                 txtInst.Text = "Select the account you'd like to transfer TO\n The maximum amount is 10,000";
-                actionChoice = "tran";
+                actionChoice = "tran";                
+                if (txtAmount.Text == "")
+                { }
+                else
+                {
+                    decimal checkAmount = Convert.ToDecimal(txtAmount.Text);
+                    if (checkAmount > 10000)
+                    {
+                        btnSubmit.Enabled = false;
+                    }
+                    else
+                    { btnSubmit.Enabled = true; }
+                }
             }
         }
 
@@ -105,8 +131,21 @@ namespace WindowsFormsApp3
         {
             if (rbtnBill.Checked == true)
             {
-                txtInst.Text = "Please make sure your chequing account is selected\n The maximum amount is 10,000";
+                txtInst.Text = "Please make sure your chequing account is selected\n The maximum amount is 10,000\nA $1.25 fee will be automatically aplied";
                 actionChoice = "bill";
+                rbtnSav.Enabled = false;
+                rbtnCheq.Checked = true;
+                decimal checkAmount = Convert.ToDecimal(txtAmount.Text);
+                if (checkAmount > 10000)
+                {
+                    btnSubmit.Enabled = false;
+                }
+                else
+                { btnSubmit.Enabled = true; }
+            }
+            else
+            {
+                rbtnSav.Enabled = true;
             }
         }
         #endregion
@@ -126,6 +165,7 @@ namespace WindowsFormsApp3
 
         private void txtAmount_TextChanged(object sender, EventArgs e)
         {
+            
 
         }
 
@@ -241,8 +281,8 @@ namespace WindowsFormsApp3
             amount = txtAmount.Text;
             switch (actionChoice)
             {
-                case "with":
-                    withdrawal(amount);
+                case "with":                    
+                        withdrawal(amount);
                     break;
 
                 case "dep":
@@ -265,17 +305,90 @@ namespace WindowsFormsApp3
 
         private void billPayment(string _amount)
         {
-            throw new NotImplementedException();
+            using (SqlConnection con1 = new SqlConnection(CS))
+            {
+                
+                SqlDataAdapter sda = new SqlDataAdapter("select Balance from Accounts where PIN = '" + pin + "' and Type = '" + accountType + "'", con1);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+
+                
+                double balance = Convert.ToDouble(dt.Rows[0][0].ToString());
+                double Amount = Convert.ToDouble(_amount);
+                newBalance = Convert.ToDecimal(balance - (1.25 + Amount));
+                SqlCommand cmd = new SqlCommand("set Balance = " + newBalance + " where Balance = " + balance + "");
+                MessageBox.Show("Your new balance is $" + newBalance);
+
+            }
         }
+    
 
         private void transfer(string _amount)
         {
-            throw new NotImplementedException();
+            using (SqlConnection con1 = new SqlConnection(CS))
+            {
+                if (accountType == "S")
+                {
+                    _accountType = "C";
+                }
+                else
+                {
+                    _accountType = "S";
+                }
+
+                SqlDataAdapter sda = new SqlDataAdapter("select Balance from Accounts where PIN = '" + pin + "' and Type = '" + accountType + "'", con1);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+
+                SqlDataAdapter sda2 = new SqlDataAdapter("select Balance from Accounts where PIN = '" + pin + "' and Type = '" + _accountType + "'", con1);
+                DataTable dt2 = new DataTable();
+                sda2.Fill(dt2);                               
+                balance = Convert.ToDecimal(dt.Rows[0][0].ToString());
+                Amount = Convert.ToDecimal(_amount);
+                decimal _balance = Convert.ToDecimal(dt2.Rows[0][0].ToString());
+                if (_balance < Amount)
+                {
+                    MessageBox.Show("Error: Insufficient funds");
+                    rbtnTran.Checked = false;
+                    rbtnSav.Checked = false;
+                    rbtnCheq.Checked = true;
+                    return;
+                }
+                else
+                {
+                    newBalance = balance + Amount;
+                    decimal _newBalance = _balance - Amount;
+                    SqlCommand cmd = new SqlCommand("update Accounts set Balance = " + balance + Amount + " where Balance = " + balance + " and Type = '" + accountType + "'");
+                    //SqlCommand cmd2 = new SqlCommand("set Balance = " + _balance - Amount + " where Balance = " + _balance + " and Type = '" + _accountType + "'");
+                    if (accountType == "C")
+                    {
+                        MessageBox.Show("Your Chequing balance is $" + newBalance + "\nYour Savings balance is $" + _newBalance);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Your Savings balance is $" + newBalance + "\nYour Chequing balance is $" + _newBalance);
+                    }
+                }
+            }
         }
 
         private void deposit(string _amount)
         {
-            throw new NotImplementedException();
+            using (SqlConnection con1 = new SqlConnection(CS))
+            {
+
+                SqlDataAdapter sda = new SqlDataAdapter("select Balance from Accounts where PIN = '" + pin + "' and Type = '" + accountType + "'", con1);
+                DataTable dt = new DataTable();
+                sda.Fill(dt);
+
+                balance = Convert.ToDecimal(dt.Rows[0][0].ToString());
+                Amount = Convert.ToDecimal(_amount);
+                newBalance = balance + Amount;
+                SqlCommand cmd = new SqlCommand("update Accounts set Balance = " + balance + Amount + " where Balance = " + balance + ";");
+                
+                MessageBox.Show("Your new balance is $" + newBalance);
+
+            }
         }
 
         private void withdrawal(string _amount)
@@ -284,24 +397,15 @@ namespace WindowsFormsApp3
             using (SqlConnection con1 = new SqlConnection(CS))
             {
 
-                SqlDataAdapter sda = new SqlDataAdapter("select Balance from Accounts where PIN = '"+login.pin+"' and Type = '"+accountType+"'", con1);
+                SqlDataAdapter sda = new SqlDataAdapter("select Balance from Accounts where PIN = '"+pin+"' and Type = '"+accountType+"'", con1);
                 DataTable dt = new DataTable();
                 sda.Fill(dt);
-                if(dt.Rows[0][0].ToString()=="1")
-                {
-                    txtAmount.Text = login.pin;
-                }
-                else
-                {
-                    MessageBox.Show("Wrong");
-                }
-                string _balance = dt.Rows[0][0].ToString();
                 
-                decimal balance = Convert.ToDecimal(_balance);
-                decimal amount = Convert.ToDecimal(_amount);
-                decimal newBalance = balance - amount;
+                balance = Convert.ToDecimal(dt.Rows[0][0].ToString());
+                Amount = Convert.ToDecimal(_amount);
+                newBalance = balance - Amount;
                 SqlCommand cmd = new SqlCommand("set Balance = " + newBalance + " where Balance = " + balance + "");
-                MessageBox.Show("Your new balance is $");
+                MessageBox.Show("Your new balance is $"+newBalance);
 
             }
         }
