@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -27,7 +27,7 @@ namespace WindowsFormsApp3
             
         }
         public string name;
-        public string pin;
+        public static string pin;
 
         //public event DataSetter DataSet;
 
