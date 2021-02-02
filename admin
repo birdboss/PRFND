@@ -1,0 +1,224 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace WindowsFormsApp3
+{
+    public partial class admin : Form
+    {
+        public admin()
+        {
+            InitializeComponent();
+
+            greyOut();
+
+        }
+        string selection;
+        decimal amount;
+        decimal balance;
+        static decimal newBalance;
+        static string CS = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\source\repos\project2\WindowsFormsApp3\Clients.mdf;Integrated Security=True";
+        string queryInt = @"";
+        string queryRefill = @"";
+        string qureyPrint = @"";
+        string queryAdd = @"insert into DailyBalances values('" + DateTime.Now.ToString() + "'," + newBalance + ")";
+        SqlConnection con = new SqlConnection(CS);
+
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
+        #region stars
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        #endregion
+
+        #region Select an action
+        private void gbSelect_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void rbtnInt_CheckedChanged(object sender, EventArgs e)
+        {
+            selection = "interest";
+        }
+
+        private void rbtnRefill_CheckedChanged(object sender, EventArgs e)
+        {
+            selection = "refill";
+            rbtn5k.Enabled = true;
+            rbtn10k.Enabled = true;
+            rbtn15k.Enabled = true;
+            rbtn20k.Enabled = true;
+            using (SqlConnection con = new SqlConnection(CS))
+            {
+                con.Open();
+                SqlCommand get = new SqlCommand("SELECT TOP 1 ATM_Balance FROM DailyBalances ORDER BY Date DESC", con);
+                SqlCommand com = new SqlCommand(queryAdd, con);
+                balance = get.ExecuteNonQuery();
+                
+            }
+            if (balance > 1500)
+            {
+                label3.Text = "The current ATM balance is: $" + balance +"\nIt does not need to be refilled yet.";
+                greyOut();
+            }
+            label3.Text = "The current ATM balance is: $" + balance;
+        }
+
+        private void rbtnOOS_CheckedChanged(object sender, EventArgs e)
+        {
+            selection = "oos";
+        }
+
+        private void rbtnPrint_CheckedChanged(object sender, EventArgs e)
+        {
+            selection = "print";
+        }
+
+        #endregion
+
+        #region amounts
+        private void gbAmount_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void rbtn5k_CheckedChanged(object sender, EventArgs e)
+        {
+            amount = 5000;
+        }
+
+        private void rbtn10k_CheckedChanged(object sender, EventArgs e)
+        {
+            amount = 10000;
+        }
+
+        private void rbtn15k_CheckedChanged(object sender, EventArgs e)
+        {
+            amount = 15000;
+        }
+
+        private void rbtn20k_CheckedChanged(object sender, EventArgs e)
+        {
+            amount = 20000;
+        }
+        #endregion
+
+        #region buttons
+        private void btnSubmit_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection con = new SqlConnection(CS))
+            {
+
+                switch (selection)
+                {
+                    case "interest":
+                        SqlCommand Int = new SqlCommand(queryRefill, con);
+                        break;
+                    case "refill":
+                        refill();
+                        label3.Text = "The current ATM balance is currently: $" + balance;
+                        break;
+                    case "oos":
+                        oos OoS = new oos();
+                        OoS.Show();
+                        this.Hide();
+                        break;
+                    case "print":
+                        report print = new report();
+                        print.Show();
+                        this.Hide();
+                        break;
+                }
+            }
+        }       
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            LogIn login = new LogIn();
+            login.Show();
+        }
+               
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void admin_Load(object sender, EventArgs e)
+        {
+
+        }
+        #endregion
+
+        #region methods
+        public void greyOut()
+        {
+            rbtn5k.Enabled = false;
+            rbtn10k.Enabled = false;
+            rbtn15k.Enabled = false;
+            rbtn20k.Enabled = false;
+        }
+
+        private void refill()
+        {
+            decimal newBalance = balance + amount;
+            if (newBalance > 50000)
+            {
+                MessageBox.Show("Error: ATM balance must not exceed $20000");
+                newBalance = 0;
+                uncheck();
+                return;
+            }
+            else
+            {
+                MessageBox.Show("The ATM's balance is now $" + newBalance);
+                SqlCommand add = new SqlCommand(queryRefill, con);
+                selection = null;
+                rbtnRefill.Checked = false;
+                return;
+            }
+        }
+
+        private void uncheck()
+        {
+            rbtn5k.Checked = false;
+            rbtn10k.Checked = false;
+            rbtn15k.Checked = false;
+            rbtn20k.Checked = false;
+        }
+        #endregion
+    }
+}
+
