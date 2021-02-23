@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewBag.Title = "AddContact";
+}
+
+<header>
+<h2>Add New Contact</h2>
+
+</header>
+<body>
+    <form action="SetContact">
+        <text><b>Name: </b></text><br />@Html.TextBox("name")
+        <br />
+        <text><b>Mobile Number: </b></text><br />@Html.TextBox("mobNo")
+        <br />
+        <text><b>Office Number: </b></text><br />@Html.TextBox("offNo")
+        <br />
+        <text><b>Home Town: </b></text><br />@Html.TextBox("homeTown")
+        <br />
+        <text><b>Email: </b></text><br />@Html.TextBox("email")
+        <br />
+        <text><b>Image: </b></text><br /><input type="file" />
+        <br />
+        <input type="submit" value="Add Contact"  />
+    </form>
+
+</body>
+
