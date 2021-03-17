@@ -1,105 +1,179 @@
 package com.company;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        boolean running = true;
-        Sales sales = new Sales("Dylan", 10.00);
-        ArrayList<Sales> itemsSold = new ArrayList();
-        double[][] itemCost = new double[4][2];
-        itemCost=populateArray(itemCost);
-        while (running) {
-            mainMenu(itemsSold, itemCost);
-            running = false;
-        }
-
-
-    }
-
-    private static void mainMenu(ArrayList<Sales> itemsSold, double[][] itemCost) {
-        String choice;
         Scanner s = new Scanner(System.in);
-        System.out.println("Please make a selection:\nNew entry: 1\nDisplay: 2\nQuit: 3");
-        choice = s.next();
-        switch (choice){
-
-            case "1":
-                newEntry(itemCost, itemsSold);
-                break;
-            case "2":
-                getEmployee(itemsSold);
-                break;
-            case "3":
-                return;
-        }
-    }
-
-    private static void getEmployee(ArrayList<Sales> itemsSold) {
-        Scanner s = new Scanner(System.in);
-        for(int i = 0; i < itemsSold.size(); i ++){
-            System.out.println(itemsSold.get(i));
-            //System.out.println("Name: "+ itemsSold.get(i));
-            //System.out.println("Total: "+sales.getTotal());
-        }
-
-
-
-    }
-
-    private static void newEntry(double[][] itemCost, ArrayList<Sales> itemsSold) {
-        Scanner s = new Scanner(System.in);
-        String name;
-        double total;
-        System.out.println("Enter the employee's Name:");
-        name = s.next();
-        total = getTotal(itemCost);
-        Sales sales = new Sales(name, total);
-        itemsSold.add(sales);
-        System.out.println("New employee successfully entered.");
-        mainMenu(itemsSold,itemCost);
-    }
-
-    private static double getTotal(double[][] itemCost) {
-        Scanner s = new Scanner(System.in);
-        double total = 0;
-        int i;
-        boolean running = true;
-        System.out.println("Enter the information for the product sold");
-        while(running)
-        {
-            int qty;
-            double price;
-            System.out.print("ID: ");
-            i = s.nextInt();
-            System.out.print("Quantity: ");
-            qty = s.nextInt();
-            price = itemCost[i][1];
-            double _total = price * qty;
-            total = ((total + _total)*0.09)+(total+_total);
-
-            System.out.println("Would you like to add another item?\nYes: 1\nNo: 2");
+        Boolean inc = true;
+        while (inc == true) {
+            System.out.println("What would you like to do? Increment...\n Time : 1\n Date : 2\n Quit : 3");
             int choice = s.nextInt();
-            if (choice == 2)
-            {
-                running = false;
+
+            switch (choice) {
+                case 1:
+                    Time time = inputTime(inc);
+                    Date date = inputDate(inc);
+                    timeMenu(time,date);
+                    break;
+
+                case 2:
+                    date =inputDate(inc);
+                    menuDate(date);
+                    break;
+
+                case 3:
+                    inc = false;
+                    break;
             }
         }
-        return total;
+
+
     }
 
 
-    private static double[][] populateArray(double[][] itemCost) {
-        itemCost[0][0] = 1;
-        itemCost[0][1] = 239.99;
-        itemCost[1][0] = 2;
-        itemCost[1][1] = 129.75;
-        itemCost[2][0] = 3;
-        itemCost[2][1] = 99.95;
-        itemCost[3][0] = 4;
-        itemCost[3][1] = 350.89;
-        return itemCost;
+    private static Time inputTime(Boolean inc) {
+        Scanner s = new Scanner(System.in);
+        //int choice;
+        //        System.out.println("If you would like to enter a custom time press 1, if not press any other number...");
+        //        choice = s.nextInt();
+
+        //if (choice == 1) {
+            System.out.println("Please enter the time in this format (24 hour) hour:minute:second");
+            String input = s.next();
+            String arr[] = input.split(":");
+            int hour = Integer.parseInt(arr[0]);
+            int minute = Integer.parseInt(arr[1]);
+            int second = Integer.parseInt(arr[2]);
+            Time time = new Time(hour, minute, second);
+            //Date date = autoDate();
+            return time;
+
+        //}
+        //else {
+        //            Time time = autoTime();
+        //            Date date = autoDate();
+        //            timeMenu(time, date);
+        //        }
+
+
+
+    }
+
+    //private static Time autoTime() {
+    //        LocalDateTime ldt = LocalDateTime.now();
+    //        DateTimeFormatter _dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+    //        String _time = _dtf.format(ldt);
+    //        String arrT[] = _time.split(":");
+    //        int hour = Integer.parseInt(arrT[0]);
+    //        int minute = Integer.parseInt(arrT[1]);
+    //        int second = Integer.parseInt(arrT[2]);
+    //        Time time = new Time(hour, minute, second);
+    //        return time;
+    //    }
+
+    private static void timeMenu(Time time, Date date) {
+        boolean inc = true;
+        int choice;
+        Scanner s = new Scanner(System.in);
+        while (inc == true) {
+            System.out.println("What would you like to do? Increment...\n Second : 1\n Minute : 2\n Hour : 3\n Quit : 4");
+            choice = s.nextInt();
+            switch (choice) {
+                case 1:
+                    time.tick(time, date);
+                    System.out.println("\nTime: " + time+"\nDate: "+date);
+                    System.out.println("\n");
+                    break;
+                case 2:
+                    time.incrementMinute(time, date);
+                    System.out.println("\nTime: " + time+"\nDate: "+date);
+                    System.out.println("\n");
+                    break;
+                case 3:
+                    time.incrementHour(time, date);
+                    System.out.println("\nTime: " + time+"\nDate: "+date);
+                    System.out.println("\n");
+                    break;
+                case 4:
+                    inc = false;
+                    break;
+            }
+
+        }
+    }
+
+
+    public static Date inputDate(boolean inc) {
+        Scanner s = new Scanner(System.in);
+        //System.out.println("If you would like to enter a custom time press 1, if not press any other number...");
+        //        int choice = s.nextInt();
+        //
+        //        if (choice == 1) {
+            System.out.println("Please enter the date in this format: mm/dd/yyyy");
+            String input = s.next();
+            String arr[] = input.split("/");
+            int month = Integer.parseInt(arr[0]);
+            int day = Integer.parseInt(arr[1]);
+            int year = Integer.parseInt(arr[2]);
+            Date date = new Date(month, day, year);
+            return date;
+
+       // } else {
+        //            Date date = autoDate();
+        //            menuDate(date);
+        //        }
+
+
+
+    }
+
+    //private static Date autoDate() {
+    //        LocalDateTime ldt = LocalDateTime.now();
+    //        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    //        String _date = dtf.format(ldt);
+    //        String arrD[] = _date.split("/");
+    //        int month = Integer.parseInt(arrD[0]);
+    //        int day = Integer.parseInt(arrD[1]);
+    //        int year = Integer.parseInt(arrD[2]);
+    //        Date date = new Date(month, day, year);
+    //
+    //        return date;
+    //    }
+
+    private static void menuDate(Date date) {
+        boolean inc = true;
+        Scanner s = new Scanner(System.in);
+        while (inc == true) {
+            System.out.println("What would you like to do? Increment...\n Date : 1\n Month : 2\n Year : 3\n Quit : 4");
+            int choice = s.nextInt();
+            switch (choice) {
+                case 1:
+                    date = date.incrementDay(date);
+                    System.out.println("\n" + date);
+                    System.out.println("\n");
+                    break;
+                case 2:
+                    date = date.incrementMonth(date);
+                    System.out.println("\n" + date);
+                    System.out.println("\n");
+                    break;
+                case 3:
+                    date = date.incrementYear(date);
+                    System.out.println("\n" + date);
+                    System.out.println("\n");
+                    break;
+                case 4:
+                    inc = false;
+                    break;
+            }
+        }
     }
 }
+
+
+
+
